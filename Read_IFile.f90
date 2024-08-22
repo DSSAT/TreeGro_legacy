@@ -6,7 +6,7 @@
                          ! parameters, hourly weather data.
       IMPLICIT     NONE
 
-      CHARACTER*1   PLDS
+      CHARACTER*1   PLDS, BLANK
       CHARACTER*2   CROP
       CHARACTER*6   VARTY
      ! CHARACTER*10  STNAME(20) 
@@ -20,8 +20,10 @@
 
       CHARACTER*6  ERRKEY, SECTION
       PARAMETER (ERRKEY = 'READ_I')
+      PARAMETER (BLANK = ' ')
 
       INTEGER ISECT, LINC, LNUM, LUNIO, ERR, FOUND, STGDOY(20), TRT
+      INTEGER PATHL
       REAL, INTENT(OUT), OPTIONAL :: LAII, LWAI, SWAI, RWAI, PWAI
       REAL, INTENT(OUT), OPTIONAL :: RDPI, GSTI, CHTI, CWIDI 
       REAL LAII0, GSTI0, LWAI0,SWAI0,RWAI0,PWAI0,RDPI0,CHTI0,CWIDI0
@@ -50,14 +52,19 @@
 !-----------------------------------------------------------------------
 !   Find and read initial biomass file
     FILEIB = FILEX(1:11) // "I"
-    PathIB = TRIM(PATHEX) // FILEIB
+    PATHL  = INDEX(PATHEX,BLANK)
+    IF (PATHL <= 1) THEN
+      PATHIB = FILEIB
+    ELSE
+      PATHIB = PATHEX(1:(PATHL-1)) // FILEIB
+    ENDIF
     INQUIRE (FILE = PATHIB, EXIST = GoodFile)
 
     OPEN (LUNIO, FILE = PathIB, STATUS = 'OLD', IOSTAT=ERR)
     IF (ERR .NE. 0) GoodFile = .FALSE.
 
     IF (GoodFile) THEN
-      SECTION = '*EXP. DATA (I)'
+      SECTION = '*EXP. '
       CALL FIND(LUNIO, SECTION, LINC, FOUND) ; LNUM = LNUM + LINC
       IF (FOUND .EQ. 0) GoodFile = .FALSE.
     ENDIF

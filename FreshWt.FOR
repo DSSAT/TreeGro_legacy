@@ -149,6 +149,8 @@
           CASE ('GB')       ! Snap bean
 !           DMC(NPP) = 0.0465 + 0.0116 * EXP(0.161 * PAGE)
             DMC(NPP) = 0.023 + 0.0277 * EXP(0.116 * PAGE)
+          CASE DEFAULT !Using from Tomato
+            DMC(NPP) = (5. + 7.2 * EXP(-7.5 * PAGE / 40.)) / 100.
         END SELECT
 
 !       Fresh weight (g/pod)
